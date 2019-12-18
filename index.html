@@ -1,0 +1,65 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Dither</title>
+</head>
+
+<body>
+<img id="🐱" src="./img.jpg"/>
+<hr />
+<canvas id="🖼"> </canvas>
+
+  <script>
+var cat = document.getElementById("🐱")
+cat.setAttribute("crossOrigin", "")
+cat.crossOrigin = "Anonymous"
+var painting = document.getElementById("🖼")
+cat.onload = function(){
+  painting.width = cat.width
+  painting.height = cat.height
+  var ctx = painting.getContext("2d")
+  ctx.drawImage(cat, 0, 0, cat.width, cat.height)
+  window.ctx = ctx
+    setTimeout(function(){
+
+
+
+  var dith = [208, 112, 240, 80, 48, 176, 16, 144, 224, 64, 192, 96, 254, 128, 32, 160]
+  // console.log(catdata.data)
+
+  var width = cat.width
+  var height = cat.height
+
+  // for(var j = 0; j < 10; j++){
+  for(var y = 0; y < height; y++){
+    // var grey = catdata.data[i]
+    var catdata = ctx.getImageData(0,y,cat.width,1)
+    for(var x = 0; x < width; x++){
+
+      var ditherpos = (y % 4) + 4 * (x % 4)
+
+      var grey = (2126 * catdata.data[x*4    ] +
+                  7152 * catdata.data[x*4 + 1] +
+                  0722 * catdata.data[x*4 + 2])/10000
+
+      var new_val = (grey >= dith[ditherpos]) * 255
+      catdata.data[x*4    ] = new_val
+      catdata.data[x*4 + 1] = new_val
+      catdata.data[x*4 + 2] = new_val
+
+      // catdata.data[x*4    ] = (catdata.data[x*4    ] >= dith[ditherpos]) * 255
+      // catdata.data[x*4 + 1] = (catdata.data[x*4 + 1] >= dith[ditherpos]) * 255
+      // catdata.data[x*4 + 2] = (catdata.data[x*4 + 2] >= dith[ditherpos]) * 255
+    }
+    ctx.putImageData(catdata, 0, y)
+  }
+// }
+
+  window.catdata = catdata
+}, 1000)
+}
+
+
+
+  </script>
+</body>
+</html>
